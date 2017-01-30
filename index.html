@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Back to the news</title>
+	
+	 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+
+	<style>
+		.noticias>a{
+			display: block;
+		}
+		.chip{
+			cursor: pointer;
+		}
+		.filtros{
+			margin.top: 30px;
+		}
+	</style>
+
+</head>
+<body>
+	
+	<div class="content container">
+		
+		<form  name="news" action="POST">
+			<input name="fecha" type="date" class="datepicker" placeholder="Set the date">
+			<input type="submit" value="Check" class="btn">
+		</form>
+		<div class="filtros"></div>
+		<div class="noticias"></div>
+
+	</div>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+
+<script>
+const noticias = document.querySelector('.noticias');
+const filtros = document.querySelector('.filtros');
+let categories = [];
+
+function refilter(e, cat){
+
+	console.log(e.target.dataset.info);
+	
+	const itemCat = e.target.dataset.info;
+	console.log(cat);
+	const catArr = cat.filter( c =>{
+		if(c.section_name == catArr){
+			return c;
+		}
+	});
+
+	displayCategories(catArr);
+
+}
+
+function displayCategories(categorias){
+
+	const layout = categorias.map( categoria => {
+
+		if(categoria !=null){
+			return `<div class="chip categoria" data-info="${categoria}">${categoria}</div>`;
+		}else{
+			return '';
+		}
+
+	}).join('')
+
+
+	filtros.innerHTML = layout;
+
+	//esto todavía no sirve
+	//Necesito hacer que al click se filtren las noticias por categorías pero no está agarrando el array de categorías;
+	filtros.addEventListener('click', function(e, categorias){
+		console.log(e.target.dataset.info);
+	
+		const itemCat = e.target.dataset.info;
+		console.log(categorias);
+		const catArr = categorias.filter( c =>{
+			if(c.section_name == catArr){
+				return c;
+			}
+	});
+
+	displayCategories(catArr);
+	});
+}
+
+
+function filterCategories(cat){
+
+	const categorias = cat.filter( (item, index, inputArray) => {
+		return inputArray.indexOf(item) == index;
+	})
+
+	console.log(categorias);
+	displayCategories(categorias);
+
+}
+
+function display(datos){
+
+	datos.map(dato =>{
+		categories.push(dato.section_name);
+		return categories;
+	});
+
+	filterCategories(categories);
+
+	//hago map en el arreglo para desplegar las noticias del array con la fecha que me dio la función filtrar()
+	const html = datos.map(dato => {
+
+		return `<a href=${dato.web_url} class="card-panel z-depth-3">
+				<div >
+					<h4>${ dato.headline.main }</h4>
+					<p>${dato.snippet != null ? dato.snippet : ''}</p>
+				</div></a>`
+
+	}).join('');
+
+	//le pego las noticias al div noticias
+	noticias.innerHTML = html;
+
+}
+
+
+function filtra(r,f){
+
+	//SEPARA LA FECHA POR PUNTOS Y OBTIENE EL PRIMERO, EVADIENDO LOS MILISEGUNDOS
+	const fechaISO = f.toISOString().split('.')[0]+'Z';
+	const fechaReal = fechaISO.split('T')[0]+'T00:00:00Z';
+	console.log(fechaReal);
+	console.log(fechaISO);
+	//seteo la variable que contiene el array de noticias
+	const news = r.response.docs;
+	
+	
+	//filtro las noticias por fecha comparando la fecha del componente con la fecha de publicación del objeto
+	const arr = news.filter( noticia => {
+		if(noticia.pub_date == fechaReal){
+			return noticia
+		}
+	});
+	console.log(arr);
+	display(arr);
+
+}
+
+function getting(f, y, m){
+	//obtengo los datos con año y mes
+	var datos = fetch(`https://api.nytimes.com/svc/archive/v1/${y}/${m}.json?api-key=7439e08dd70e488cbbf80a6c3a6a442e`, {
+						method: 'GET'
+					})
+					.then(function(res){ 
+						return res.json(); //importante
+					})
+					.then(function(r){
+						console.log(r);
+						filtra(r, f);
+					});				
+	return datos;
+
+}
+	
+
+		function fecha(e){
+			e.preventDefault();
+
+			//obtiene el string de la fecha del componente de fecha
+			var d = document.news.fecha.value;
+
+			//transforma el string en un formato de fecha
+			const f = new Date(d);
+
+			//obtengo el año y el mes
+			const year = f.getFullYear();
+			const month = f.getMonth() + 1;
+			getting(f,year, month);
+
+		}
+
+document.news.addEventListener('submit', fecha);
+
+
+</script>
+
+<script>
+	$('.datepicker').pickadate({
+	   selectMonths: true, // Creates a dropdown to control month
+	   selectYears: 150 // Creates a dropdown of 15 years to control year
+	 });
+</script>
+
+</body>
+</html>

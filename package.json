@@ -1,0 +1,24 @@
+{
+  "name": "nyt-archive",
+  "version": "1.0.0",
+  "description": "NYT ARCHIVE CONSUMMING",
+  "main": "index.js",
+  "dependencies": {
+    "browser-sync": "^2.18.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "browser-sync start --server --files '*.css, *.html, *.js'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Reinhadt/NYT-Archive.git"
+  },
+  "author": "Omar Avalos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Reinhadt/NYT-Archive/issues"
+  },
+  "homepage": "https://github.com/Reinhadt/NYT-Archive#readme"
+}
