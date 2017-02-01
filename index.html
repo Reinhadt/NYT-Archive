@@ -41,19 +41,29 @@ const noticias = document.querySelector('.noticias');
 const filtros = document.querySelector('.filtros');
 let categories = [];
 
-function refilter(e, cat){
 
-	console.log(e.target.dataset.info);
+function filterCats(datos){
+	//console.log(datos);
+
+
+//Le agrego el evento click a los childrens de el div 'filtros'
+	filtros.addEventListener('click', function(e){
+		console.log(e.target.dataset.info);
 	
-	const itemCat = e.target.dataset.info;
-	console.log(cat);
-	const catArr = cat.filter( c =>{
-		if(c.section_name == catArr){
-			return c;
-		}
-	});
+		//OBTENGO el data-info de el chip clickeado
+		const itemCat = e.target.dataset.info;
+		
+		//asigno a una constante catarr los datos filtrados por categoría
+		const catArr = datos.filter( dato =>{
+			//si los datos(el arreglo de noticias) en su propiedad section_name coinciden con el item clickado retorna los items filtrados 
+			if(dato.section_name == itemCat){
+				return dato;
+			}
+		});
 
-	displayCategories(catArr);
+		//despliego los datos nuevamente ya filtrados:
+		display(catArr);
+	});	
 
 }
 
@@ -72,21 +82,9 @@ function displayCategories(categorias){
 
 	filtros.innerHTML = layout;
 
-	//esto todavía no sirve
-	//Necesito hacer que al click se filtren las noticias por categorías pero no está agarrando el array de categorías;
-	filtros.addEventListener('click', function(e, categorias){
-		console.log(e.target.dataset.info);
-	
-		const itemCat = e.target.dataset.info;
-		console.log(categorias);
-		const catArr = categorias.filter( c =>{
-			if(c.section_name == catArr){
-				return c;
-			}
-	});
 
-	displayCategories(catArr);
-	});
+	filterCats(arr);
+	
 }
 
 
@@ -139,7 +137,7 @@ function filtra(r,f){
 	
 	
 	//filtro las noticias por fecha comparando la fecha del componente con la fecha de publicación del objeto
-	const arr = news.filter( noticia => {
+	arr = news.filter( noticia => {
 		if(noticia.pub_date == fechaReal){
 			return noticia
 		}
