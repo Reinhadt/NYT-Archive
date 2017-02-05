@@ -41,6 +41,11 @@ const noticias = document.querySelector('.noticias');
 const filtros = document.querySelector('.filtros');
 let categories = [];
 
+//TODO:
+//Quitar las repeticiones de categorías(no sé por qué no funciona el filtro)
+//hacer la búsqueda por item de categoría: si tiene New York and region; Business y le pico a Business debe encontrar la noticia
+//idea: obtener las categorías a la hora de filtrar y si tiene punto y coma dividirlos y buscar una coincidencia
+
 
 function filterCats(datos){
 	//console.log(datos);
@@ -69,10 +74,14 @@ function filterCats(datos){
 
 function displayCategories(categorias){
 
+	//console.log(categorias);
+
 	const layout = categorias.map( categoria => {
 
 		if(categoria !=null){
-			return `<div class="chip categoria" data-info="${categoria}">${categoria}</div>`;
+			
+			return `<div class="chip categoria" data-info="${categoria}">${categoria}</div>`;	
+			
 		}else{
 			return '';
 		}
@@ -88,14 +97,47 @@ function displayCategories(categorias){
 }
 
 
-function filterCategories(cat){
-
+function discardCategories(cat){
 	const categorias = cat.filter( (item, index, inputArray) => {
 		return inputArray.indexOf(item) == index;
 	})
 
-	console.log(categorias);
 	displayCategories(categorias);
+}
+
+function filterCategories(cat){
+	//declaro un arreglo vacío
+	splitArr = [];
+	
+	//filtro la info
+	cat.filter(item =>{
+		//si es diferente de null
+		if (item !=null){
+			//e incluye un punto y coma, entonces divido y mapeo para hacerle push al arreglo splitArr
+			if(item.includes(';')){
+				splitted = item.split(';');
+				console.log(splitted);
+				splitted.map(it =>{
+
+					splitArr.push(it);	
+				});
+				
+				return splitArr;	
+			}
+			//si no, de todos modos le hago push al arreglo para guardarlo
+			else{
+				splitArr.push(item);
+			}
+			return splitArr;	
+		}
+		
+	})
+
+	//console.log(splitArr);
+
+	discardCategories(splitArr)
+
+
 
 }
 
