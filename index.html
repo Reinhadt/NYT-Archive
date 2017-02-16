@@ -42,10 +42,15 @@ const filtros = document.querySelector('.filtros');
 let categories = [];
 
 //TODO:
-//Quitar las repeticiones de categorías(no sé por qué no funciona el filtro)
+//IMPORTANTE: la variable splitArr ya viene filtrada por categorías independientes y separadas por punto y coma, si filtro en base a ese arreglo puedo filtrar las noticias comparando con ese arreglo de categorías
+
+//COMPARA EL ITEM DE SPLITARRAY CON EL SECTION_NAME POR MEDIO DE 'INCLUDES'!!!!!! SIIII!
+
 //hacer la búsqueda por item de categoría: si tiene New York and region; Business y le pico a Business debe encontrar la noticia
 //idea: obtener las categorías a la hora de filtrar y si tiene punto y coma dividirlos y buscar una coincidencia
 
+//Most do: Para filtrar por categoría necesito guardar en un arreglo las categorías ya filtradas y no repetidas
+//TODO: Comparar las categorías ya filtradas con alguna de las categorías que existen 
 
 function filterCats(datos){
 	//console.log(datos);
@@ -58,6 +63,21 @@ function filterCats(datos){
 		//OBTENGO el data-info de el chip clickeado
 		const itemCat = e.target.dataset.info;
 		
+		const catArrFiltered = datos.filter( dato =>{
+			if(dato.section_name !=null && dato.section_name.includes(';')){
+				const dat = dato.section_name.split('; ');
+				dat.map(d =>{
+					console.log(d);
+					//AQUÍ COMPARO SI COINCIDE ALGUNA CON dato.section_name
+					//SI COINCIDE UNO DE LOS DATASETS CON ALGUNO DE LOS SECTION_NAME RETORNO ESE SECTIONNAME Y LUEGO LO MANDO DESPLEGAR CON DISPLAY()
+					//ESTE FUNCIÓN DEBE RETORNAR EL ARREGLO DE NOTICIAS QUE COINCIDAN
+					//AQUÍ RETORNO EL ARREGLO DE CATEGORÍAS
+				})
+			}
+		});
+
+		//Esto debe ser otra función que compare los items ya spliteados y compararlos
+
 		//asigno a una constante catarr los datos filtrados por categoría
 		const catArr = datos.filter( dato =>{
 			//si los datos(el arreglo de noticias) en su propiedad section_name coinciden con el item clickado retorna los items filtrados 
@@ -101,7 +121,7 @@ function discardCategories(cat){
 	const categorias = cat.filter( (item, index, inputArray) => {
 		return inputArray.indexOf(item) == index;
 	})
-
+	//console.log(categorias);
 	displayCategories(categorias);
 }
 
@@ -115,8 +135,8 @@ function filterCategories(cat){
 		if (item !=null){
 			//e incluye un punto y coma, entonces divido y mapeo para hacerle push al arreglo splitArr
 			if(item.includes(';')){
-				splitted = item.split(';');
-				console.log(splitted);
+				splitted = item.split('; ');
+				//console.log(splitted);
 				splitted.map(it =>{
 
 					splitArr.push(it);	
@@ -132,8 +152,6 @@ function filterCategories(cat){
 		}
 		
 	})
-
-	//console.log(splitArr);
 
 	discardCategories(splitArr)
 
@@ -172,8 +190,8 @@ function filtra(r,f){
 	//SEPARA LA FECHA POR PUNTOS Y OBTIENE EL PRIMERO, EVADIENDO LOS MILISEGUNDOS
 	const fechaISO = f.toISOString().split('.')[0]+'Z';
 	const fechaReal = fechaISO.split('T')[0]+'T00:00:00Z';
-	console.log(fechaReal);
-	console.log(fechaISO);
+	//console.log(fechaReal);
+	//console.log(fechaISO);
 	//seteo la variable que contiene el array de noticias
 	const news = r.response.docs;
 	
@@ -198,7 +216,7 @@ function getting(f, y, m){
 						return res.json(); //importante
 					})
 					.then(function(r){
-						console.log(r);
+						//console.log(r);
 						filtra(r, f);
 					});				
 	return datos;
